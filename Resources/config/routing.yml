@@ -1,0 +1,3 @@
+daemon_filestorage_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: DaemonFilestorageBundle:Default:index }

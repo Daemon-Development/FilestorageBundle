@@ -1,0 +1,21 @@
+Daemon\FilestorageBundle\Entity\DaemonFile:
+    type: entity
+    table: daemon_file
+    fields:
+        origname:
+            type: string
+            length: 255
+        extension:
+            type: string
+            length: 40
+        mimeType:
+            type: string
+            length: 255
+            column: mime_type
+        hashcode:
+            type: string
+            length: 255
+            unique: true
+        path:
+            type: text
+    lifecycleCallbacks: {  }

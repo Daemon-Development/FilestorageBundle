@@ -1,0 +1,37 @@
+{
+  "name":        "daemon/filestorage-bundle",
+  "type":        "symfony-bundle",
+  "description": "This bundle stores uploaded files outside the web/ folder",
+  "keywords":    ["daemon", "crud", "form", "debug", "symfony", "bundle", "twig"],
+  "homepage":    "http://github.com/Daemon-Development/FilestorageBundle",
+  "license":     "MIT",
+
+  "authors": [
+    {
+      "name": "Christian Hessel",
+      "homepage": "https://github.com/Nickolaus"
+    },
+    {
+      "name": "Daemon Development",
+      "homepage": "http://github.com/Daemon-Development"
+    }
+  ],
+
+  "require": {
+    "php":                      ">=5.5.24",
+    "symfony/framework-bundle": ">=2.7.0"
+  },
+
+  "minimum-stability": "dev",
+
+  "autoload": {
+    "psr-0": {
+      "Daemon\\SimplifyBundle\\": ""
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  }
+}
