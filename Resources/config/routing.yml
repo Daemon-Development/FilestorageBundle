@@ -1,3 +1,3 @@
-daemon_filestorage_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: DaemonFilestorageBundle:Default:index }
+daemon_filestorage_get_file:
+    path:     /file/get/{hashcode}
+    defaults: { _controller: DaemonFilestorageBundle:FileStorage:getFile }
