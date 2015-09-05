@@ -3,15 +3,14 @@
 namespace Daemon\FilestorageBundle\Component;
 
 use Daemon\FilestorageBundle\Component\Data\Enum\FileType;
+use Daemon\FilestorageBundle\Component\Helper\FileSystemHelper;
 use Daemon\FilestorageBundle\Entity\DaemonFile;
-use Daemon\SimplifyBundle\Component\Helper\FileSystemHelper;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class FileStorage {
+class FileStorage  {
 
     /**
      * @var KernelInterface
@@ -37,54 +36,44 @@ class FileStorage {
 
 
     /**
-     * Saves an uploaded file + file info (files are being saved inside the storage folder
-     *
-     * @param UploadedFile $file
-     * @return DaemonFile
-     */
-    public function save(UploadedFile $file) {
-        $hashCode = sha1_file($file);
-        $daemonFile = $this->entityManager->getRepository("DaemonFilestorageBundle:DaemonFile")
-            ->findOneBy(array("hashcode" => $hashCode));
-
-        if (isset($daemonFile)) {
-            if ($daemonFile->getOrigname() != $file->getClientOriginalName()) {
-                $daemonFile->setOrigname($file->getClientOriginalName());
-            }
-        }
-        else {
-            $daemonFile = new DaemonFile();
-            $daemonFile->setOrigname($file->getClientOriginalName());
-            $daemonFile->setExtension(substr($daemonFile->getOrigname(), strrpos($file->getClientOriginalName(),".") + 1));
-            $daemonFile->setFileType($this->guessFileType($file));
-            $daemonFile->setMimeType($file->getMimeType());
-            $md5 = md5(uniqid(rand(), true));
-            $daemonFile->setFilename($md5);
-
-            $path = "../storage/" . date("Y") . "/" . date("m") . "/" . date("d");
-            FileSystemHelper::createPathIfNotExists($path);
-
-            $hashCode = sha1_file($file);
-            $daemonFile->setHashcode($hashCode);
-
-            $file->move($path, $hashCode . "." . $daemonFile->getExtension());
-            $daemonFile->setPath($path . "/" . $hashCode . "." . $daemonFile->getExtension());
-
-            $this->entityManager->persist($daemonFile);
-        }
-        return $daemonFile;
-    }
-
-
-    /**
      * Gets the actual file which is belonging to the DaemonFile
      *
      * @param DaemonFile $daemonFile
      * @return UploadedFile
      */
     public function getFile(DaemonFile $daemonFile) {
+
         return new UploadedFile($this->kernel->getRootDir() . "/" . $daemonFile->getPath(), $daemonFile->getOrigname(), $daemonFile->getMimeType());
+
     }
+
+
+    /**
+     * Saves an uploaded file + file info (files are being saved inside the storage folder
+     *
+     * @param UploadedFile $file
+     * @return DaemonFile
+     */
+    public function save(UploadedFile $file) {
+        $hashCode =  md5(uniqid(rand(), true)) . md5(uniqid(rand(), true));
+        $daemonFile = new DaemonFile();
+        $daemonFile->setOrigname($file->getClientOriginalName());
+        $daemonFile->setExtension(substr($daemonFile->getOrigname(), strrpos($file->getClientOriginalName(),".") + 1));
+        $daemonFile->setFileType($this->guessFileType($file));
+        $daemonFile->setMimeType($file->getMimeType());
+        $path = "../storage/" . date("Y") . "/" . date("m") . "/" . date("d");
+        FileSystemHelper::createPathIfNotExists($path);
+
+        $daemonFile->setHashcode($hashCode);
+
+        $file->move($path, $hashCode . "." . $daemonFile->getExtension());
+        $daemonFile->setPath($path . "/" . $hashCode . "." . $daemonFile->getExtension());
+
+        $this->entityManager->persist($daemonFile);
+        return $daemonFile;
+    }
+
+
 
     public function fileExists(DaemonFile $daemonFile) {
         $fileSystem = new Filesystem();
