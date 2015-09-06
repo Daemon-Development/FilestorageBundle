@@ -18,16 +18,11 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class FileStorageController extends Controller {
 
     /**
-     * @var KernelInterface
-     */
-    private $kernel;
-
-    /**
      * @var EntityManager
      */
     private $entityManager;
 
-    
+
     public function setContainer(ContainerInterface $container = null)
     {
         parent::setContainer($container);
@@ -44,7 +39,7 @@ class FileStorageController extends Controller {
     public function getFileAction($hashcode) {
 
         $daemonFile = $this->entityManager->getRepository('DaemonFilestorageBundle:DaemonFile')->findOneBy(array('hashcode' => $hashcode));
-        $file = new UploadedFile($this->container->g->getRootDir() . "/" . $daemonFile->getPath(), $daemonFile->getOrigname(), $daemonFile->getMimeType());
+        $file = new UploadedFile($this->get('kernel')->getRootDir() . "/" . $daemonFile->getPath(), $daemonFile->getOrigname(), $daemonFile->getMimeType());
         $response = new BinaryFileResponse($file);
         $response->trustXSendfileTypeHeader();
         $response->setContentDisposition(
