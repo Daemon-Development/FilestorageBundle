@@ -5,4 +5,13 @@ services:
 
     daemon_filestorage:
         class: Daemon\FilestorageBundle\Component\FileStorage
-        arguments: [@kernel, @doctrine.orm.default_entity_manager]
+        arguments: 
+            - @kernel
+            - @doctrine.orm.entity_manager
+
+    daemon_filestorage.twig.extension.image_by_hash:
+        class: Daemon\FilestorageBundle\Twig\ImageExtension
+        arguments:
+            - @doctrine.orm.entity_manager
+        tags:
+            - { name: twig.extension }

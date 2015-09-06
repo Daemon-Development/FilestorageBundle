@@ -7,8 +7,9 @@
  * file that was distributed with this source code.
  */
 
-namespace opwoco\Bundle\BootstrapBundle\Twig;
+namespace Daemon\FilestorageBundle\Twig;
 
+use Daemon\FilestorageBundle\Entity\DaemonFile;
 use Doctrine\ORM\EntityManager;
 use opwoco\Bundle\BootstrapBundle\Constant\IconSet;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
  * OpwocoBootstrap Icon Extension.
  *
  */
-class IconExtension extends \Twig_Extension
+class ImageExtension extends \Twig_Extension
 {
     /**
      * @var \Twig_Environment
@@ -30,26 +31,18 @@ class IconExtension extends \Twig_Extension
     protected $entityManager;
 
     /**
-     * @var array
-     */
-    protected $iconSets;
-
-    /**
      * @var \Twig_Template
      */
-    protected $iconTemplate;
+    protected $imageTemplate;
 
     /**
      * Constructor.
      *
-     * @param string $iconSet
-     * @param string $shortcut
+     * @param EntityManager $em
      */
-    public function __construct(EntityManager $em, $iconSets, $shortcut = null)
+    public function __construct(EntityManager $em)
     {
         $this->entityManager = $em;
-        $this->iconSets = $iconSets;
-        $this->shortcut = $shortcut;
     }
 
     /**
@@ -66,58 +59,28 @@ class IconExtension extends \Twig_Extension
     public function getFunctions()
     {
         $functions = array(
-            new \Twig_SimpleFunction('opwoco_bootstrap_icon', array($this, 'renderIcon'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('daemon_file', array($this, 'renderImage'), array('is_safe' => array('html'))),
         );
-
-        if ($this->shortcut) {
-            $functions[] = new \Twig_SimpleFunction($this->shortcut, array($this, 'renderIcon'), array('is_safe' => array('html')));
-        }
 
         return $functions;
     }
 
     /**
-     * Renders the icon.
+     * Renders the image.
      *
-     * @param string  $icon
-     * @param boolean $inverted
+     * @param DaemonFile $daemonFile
      *
      * @return Response
      */
-    public function renderIcon($icon, $iconSet = null, $iconStyle = null, $inverted = false)
+    public function renderImage(DaemonFile $daemonFile)
     {
-        $template = $this->getIconTemplate();
+        $template = $this->getTemplate();
 
         $context = array(
-            'icon' => $icon,
-            'inverted' => $inverted,
-            'icon_style' => $iconStyle,
+            'hashcode' => $daemonFile->getHashcode(),
+            'title'    => $daemonFile->getOrigname(),
         );
-        if (!$iconSet || !in_array($iconSet, $this->iconSets)) {
-            $entity = $this->entityManager->getRepository('opwocoBootstrapBundle:BootstrapIcon')->findOneBy(array('identifier' => $icon));
-            if (!$entity) {
-                return $template->renderBlock($this->iconSets[IconSet::GLYPHICON], $context);
-            }
-            else {
-                if ($entity->getGlyphicon()) {
-                    return $template->renderBlock($this->iconSets[IconSet::GLYPHICON], $context);
-                }
-                else if ($entity->getFontawesome()) {
-                    return $template->renderBlock($this->iconSets[IconSet::FONTAWESOME], $context);
-                }
-                else if ($entity->getFoundation()) {
-                    return $template->renderBlock($this->iconSets[IconSet::FOUNDATION], $context);
-                }
-                else if ($entity->getIonicons()) {
-                    return $template->renderBlock($this->iconSets[IconSet::IONICONS], $context);
-                }
-                else if ($entity->getOcticons()) {
-                    return $template->renderBlock($this->iconSets[IconSet::OCTICONS], $context);
-                }
-            }
-
-        }
-        return $template->renderBlock($iconSet, $context);
+        return $template->renderBlock($daemonFile->getMediaType(), $context);
     }
 
     /**
@@ -125,18 +88,18 @@ class IconExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'opwoco_bootstrap_icon';
+        return 'daemon_file_image';
     }
 
     /**
      * @return \Twig_Template
      */
-    protected function getIconTemplate()
+    protected function getTemplate()
     {
-        if ($this->iconTemplate === null) {
-            $this->iconTemplate = $this->environment->loadTemplate('@opwocoBootstrap/icons.html.twig');
+        if ($this->imageTemplate === null) {
+            $this->imageTemplate = $this->environment->loadTemplate('DaemonFilestorageBundle:Twig:render_file.html.twig');
         }
 
-        return $this->iconTemplate;
+        return $this->imageTemplate;
     }
 }
