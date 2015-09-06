@@ -8,10 +8,10 @@ Daemon\FilestorageBundle\Entity\DaemonFile:
         extension:
             type: string
             length: 40
-        mimeType:
+        mediaType:
             type: string
             length: 255
-            column: mime_type
+            column: media_type
         hashcode:
             type: string
             length: 255

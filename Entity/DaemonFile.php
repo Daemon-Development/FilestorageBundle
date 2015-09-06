@@ -19,13 +19,6 @@ class DaemonFile extends SimplifyEntity
     private $origname;
 
     /**
-     * The md5 hash to which the file was renamed
-     *
-     * @var string
-     */
-    private $filename;
-
-    /**
      * The file extension
      *
      * @var string
@@ -33,18 +26,11 @@ class DaemonFile extends SimplifyEntity
     private $extension;
 
     /**
-     * The mime type of the file
+     * The mediaType of the file
      *
      * @var string
      */
-    private $mimeType;
-
-    /**
-     * The media type of the file
-     *
-     * @var string
-     */
-    private $fileType;
+    private $mediaType;
 
     /**
      * The md5 hash of the file ... also the name to which the file was renamed( + extension);
@@ -83,24 +69,12 @@ class DaemonFile extends SimplifyEntity
     }
 
     /**
-     * Set filename
-     *
-     * @param $filename
-     * @return $this
-     */
-    public function setFilename($filename) {
-        $this->filename = $filename;
-
-        return $this;
-    }
-
-    /**
      * Get filename
      *
      * @return string
      */
     public function getFilename() {
-        return $this->filename;
+        return substr($this->path, strrpos($this->path, '/'));
     }
 
     /**
@@ -126,51 +100,37 @@ class DaemonFile extends SimplifyEntity
     }
 
     /**
-     * Set mimeType
+     * Set mediaType
      *
-     * @param string $mimeType
+     * @param string $mediaType
      * @return DaemonFile
      */
-    public function setMimeType($mimeType)
+    public function setMediaType($mediaType)
     {
-        $this->mimeType = $mimeType;
+        $this->mediaType = $mediaType;
 
         return $this;
     }
 
     /**
-     * Get mimeType
+     * Get mediaType
      *
-     * @return string 
+     * @return string
+     */
+    public function getMediaType()
+    {
+        return $this->mediaType;
+    }
+
+    /**
+     * Get mimemediaType
+     *
+     * @return string
      */
     public function getMimeType()
     {
-        return $this->mimeType;
+        return $this->mediaType . '/' . $this->extension;
     }
-
-    /**
-     * Set fileType
-     *
-     * @param string $fileType
-     * @return DaemonFile
-     */
-    public function setFileType($fileType)
-    {
-        $this->fileType = $fileType;
-
-        return $this;
-    }
-
-    /**
-     * Get fileType
-     *
-     * @return string 
-     */
-    public function getFileType()
-    {
-        return $this->fileType;
-    }
-
     /**
      * Set hashcode
      *

@@ -59,8 +59,7 @@ class FileStorage  {
         $daemonFile = new DaemonFile();
         $daemonFile->setOrigname($file->getClientOriginalName());
         $daemonFile->setExtension(substr($daemonFile->getOrigname(), strrpos($file->getClientOriginalName(),".") + 1));
-        $daemonFile->setFileType($this->guessFileType($file));
-        $daemonFile->setMimeType($file->getMimeType());
+        $daemonFile->setMediaType($this->guessFileType($file));
         $path = "../storage/" . date("Y") . "/" . date("m") . "/" . date("d");
         FileSystemHelper::createPathIfNotExists($path);
 
