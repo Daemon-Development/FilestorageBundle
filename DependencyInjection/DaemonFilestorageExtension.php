@@ -21,6 +21,8 @@ class DaemonFilestorageExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+        $container->setParameter( 'daemon_filestorage.storage_name', $config[ 'storage_name' ]);
+        $container->setParameter( 'daemon_filestorage.storage_type', $config[ 'storage_type' ]);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
